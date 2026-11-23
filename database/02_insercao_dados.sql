@@ -2,15 +2,15 @@
 -- 1. USUARIO
 INSERT INTO USUARIO (CPF, PRIMEIRO_NOME, SOBRENOME, EMAIL, DATA_NASC) VALUES
  ('46258753906','Ana','Silva','ana.silva@ufop.edu.br','1980-03-10'),              -- administradora
- ('91557412073','Bruno','Costa','bruno.costa@ufop.edu.br','1990-07-22'),          -- funcionário (Ouro Preto)
- ('68514753835','Carla','Mendes','carla.mendes@ufop.edu.br','1988-11-02'),        -- funcionária (Ouro Preto)
+ ('91557412073','Bruno','Costa','bruno.costa@ufop.edu.br','1990-07-22'),          -- funcionario (Ouro Preto)
+ ('68514753835','Carla','Mendes','carla.mendes@ufop.edu.br','1988-11-02'),        -- funcionaria (Ouro Preto)
  ('06973133525','Diego','Lima','diego.lima@aluno.ufop.edu.br','2004-05-30'),      -- aluno
  ('63815374855','Elisa','Rocha','elisa.rocha@aluno.ufop.edu.br','2003-01-15'),    -- aluna
  ('01849787778','Felipe','Alves','felipe.alves@aluno.ufop.edu.br','2005-09-08'),  -- aluno
  ('09247413338','Gabi','Souza','gabi.souza@aluno.ufop.edu.br','2004-12-20'),      -- aluna
- ('27861542866','Hugo','Pereira','hugo.pereira@ufop.edu.br','1985-06-14'),        -- funcionário (Mariana)
+ ('27861542866','Hugo','Pereira','hugo.pereira@ufop.edu.br','1985-06-14'),        -- funcionario (Mariana)
  ('55956348712','Iara','Martins','iara.martins@aluno.ufop.edu.br','2005-02-11'),  -- aluna (Mariana)
- ('76673084626','Julia','Ferreira','julia.ferreira@ufop.edu.br','1992-04-18');    -- funcionária (João Monlevade)
+ ('76673084626','Julia','Ferreira','julia.ferreira@ufop.edu.br','1992-04-18');    -- funcionaria (Joao Monlevade)
 
 -- 2. TELEFONE_USUARIO
 INSERT INTO TELEFONE_USUARIO (CPF, TELEFONE) VALUES
@@ -20,7 +20,7 @@ INSERT INTO TELEFONE_USUARIO (CPF, TELEFONE) VALUES
  ('55956348712','31999990009');
 
 -- 3. RESPONSAVEL
---    1 = Diego, 2 = Elisa, 3 = Atlética, 4 = DCE, 5 = Iara
+--    1 = Diego, 2 = Elisa, 3 = Atletica, 4 = DCE, 5 = Iara
 INSERT INTO RESPONSAVEL DEFAULT VALUES;
 INSERT INTO RESPONSAVEL DEFAULT VALUES;
 INSERT INTO RESPONSAVEL DEFAULT VALUES;
@@ -36,7 +36,7 @@ INSERT INTO FUNCIONARIO (CPF, COD_FUNCIONARIO, TURNO, CPF_ADMINISTRADOR) VALUES
  ('91557412073','F001','manha','46258753906'),   -- Ouro Preto
  ('68514753835','F002','tarde','46258753906'),   -- Ouro Preto
  ('27861542866','F003','noite','46258753906'),   -- Mariana
- ('76673084626','F004','manha','46258753906');   -- João Monlevade
+ ('76673084626','F004','manha','46258753906');   -- Joao Monlevade
 
 -- 6. USUARIO_COMUM
 INSERT INTO USUARIO_COMUM (CPF, ID_RESPONSAVEL) VALUES
@@ -48,9 +48,9 @@ INSERT INTO USUARIO_COMUM (CPF, ID_RESPONSAVEL) VALUES
 
 -- 7. CURSO
 INSERT INTO CURSO (COD_CURSO, NOME) VALUES
- ('CCO','Ciência da Computação'),
- ('SIN','Sistemas de Informação'),
- ('ENC','Engenharia de Controle e Automação'),
+ ('CCO','Ciencia da Computacao'),
+ ('SIN','Sistemas de Informacao'),
+ ('ENC','Engenharia de Controle e Automacao'),
  ('JOR','Jornalismo');
 
 -- 8. MATRICULA
@@ -64,7 +64,7 @@ INSERT INTO MATRICULA (CPF_ALUNO, COD_CURSO, NUM_MATRICULA, DATA_INGRESSO, SITUA
 
 -- 9. ORGANIZACAO
 INSERT INTO ORGANIZACAO (NOME, ID_RESPONSAVEL) VALUES
- ('Atlética Computação', 3),
+ ('Atletica Computacao', 3),
  ('DCE UFOP', 4);
 
 -- 10. TELEFONE_ORGANIZACAO
@@ -75,12 +75,12 @@ INSERT INTO TELEFONE_ORGANIZACAO (COD_ORG, TELEFONE) VALUES
 -- 11. CAMPUS
 INSERT INTO CAMPUS (NOME, CIDADE) VALUES
  ('Morro do Cruzeiro','Ouro Preto'),
- ('ICEA','João Monlevade'),
+ ('ICEA','Joao Monlevade'),
  ('ICSA','Mariana');
 
 -- 12. ESPACO_ESPORTIVO
 INSERT INTO ESPACO_ESPORTIVO (NOME, CAPACIDADE, SITUACAO, COD_CAMPUS) VALUES
-('Ginásio Poliesportivo', 200, 'disponivel', 1),  
+('Ginasio Poliesportivo', 200, 'disponivel', 1),  
  ('Quadra Externa',         50, 'disponivel', 1),  
  ('Campo de Futebol',      300, 'disponivel', 1),  
  ('Quadra ICEA',            80, 'disponivel', 2), 
@@ -100,7 +100,7 @@ INSERT INTO CAMPO (COD_ESPACO, TIPO_GRAMADO) VALUES
 -- 15. MODALIDADE
 INSERT INTO MODALIDADE (NOME) VALUES
  ('Futsal'),
- ('Vôlei'),
+ ('Volei'),
  ('Basquete'),
  ('Futebol');
 
@@ -122,11 +122,11 @@ INSERT INTO HORARIO_FUNCIONAMENTO (COD_ESPACO, DATA, HORA_ABERTURA, HORA_FECHAME
 
 -- 18. AGENDAMENTO
 INSERT INTO AGENDAMENTO (STATUS, ID_RESPONSAVEL, COD_ESPACO, COD_MODALIDADE) VALUES
- ('confirmado', 1, 1, 1),   -- 1: Diego, futsal no ginásio
- ('confirmado', 3, 3, 4),   -- 2: Atlética, futebol no campo
- ('cancelado',  2, 1, 2),   -- 3: Elisa, vôlei no ginásio (cancelado)
- ('confirmado', 5, 5, 2),   -- 4: Iara, vôlei na quadra ICSA (Mariana)
- ('confirmado', 4, 4, 2);   -- 5: DCE, vôlei na quadra ICEA (João Monlevade)
+ ('confirmado', 1, 1, 1),   -- 1: Diego, futsal no ginasio
+ ('confirmado', 3, 3, 4),   -- 2: Atletica, futebol no campo
+ ('cancelado',  2, 1, 2),   -- 3: Elisa, volei no ginasio (cancelado)
+ ('confirmado', 5, 5, 2),   -- 4: Iara, volei na quadra ICSA (Mariana)
+ ('confirmado', 4, 4, 2);   -- 5: DCE, volei na quadra ICEA (Joao Monlevade)
 
 -- 19. BLOCO_HORARIO
 INSERT INTO BLOCO_HORARIO (COD_ESPACO, DATA, HORA_INICIO, HORA_FIM, COD_AGENDAMENTO) VALUES
@@ -164,13 +164,13 @@ INSERT INTO CANCELAMENTO (COD_AGENDAMENTO, DATA_CANCELAMENTO, MOTIVO, CPF_USUARI
 
 -- 22. BLOQUEIO
 INSERT INTO BLOQUEIO (INICIO, FIM, MOTIVO, CPF_FUNCIONARIO, COD_ESPACO) VALUES
- ('2026-11-24 08:00','2026-11-26 18:00','Manutenção do piso','91557412073',2),
+ ('2026-11-24 08:00','2026-11-26 18:00','Manutencao do piso','91557412073',2),
  ('2026-11-28 08:00','2026-11-28 12:00','Evento institucional','27861542866',5);
 
 -- 23. CHAMADO_SUPORTE
 INSERT INTO CHAMADO_SUPORTE (DESCRICAO, DATA_ABERTURA, STATUS, CPF_USUARIO, CPF_FUNCIONARIO) VALUES
- ('Não consigo cancelar minha reserva','2026-11-21','resolvido','63815374855','91557412073'),
+ ('Nao consigo cancelar minha reserva','2026-11-21','resolvido','63815374855','91557412073'),
  ('Erro ao ver agenda do campo','2026-11-23','aberto','01849787778',NULL),
- ('Quadra ICSA sem iluminação','2026-11-22','em andamento','55956348712','27861542866'),
- ('Rede de vôlei rasgada na quadra ICEA','2026-11-23','aberto','06973133525','76673084626');
+ ('Quadra ICSA sem iluminacao','2026-11-22','em andamento','55956348712','27861542866'),
+ ('Rede de volei rasgada na quadra ICEA','2026-11-23','aberto','06973133525','76673084626');
 
