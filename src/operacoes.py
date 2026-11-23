@@ -39,27 +39,32 @@ def agendamentos_de_um_aluno(conn):
     cpf = input("Digite o CPF do aluno(apenas numeros) para consultar os agendamentos:")
     cur = conn.cursor()
 
-    # parte da participa (onde esta o cpf) e junta o agendamento, o espaco e a modalidade
+    # parte da participa (onde esta o cpf) e junta o usuario (nome), o agendamento,
+    # o espaco, a modalidade e o bloco de horario (data e hora)
     # cada join cola as linhas de outra tabela usando a chave estrangeira
     # o where deixa so as linhas do aluno digitado
     cur.execute("""
-        SELECT AGD.COD_AGENDAMENTO, ESPC.NOME, MOD.NOME, AGD.STATUS
+        SELECT USU.PRIMEIRO_NOME, USU.SOBRENOME, AGD.COD_AGENDAMENTO, ESPC.NOME, MOD.NOME, BH.DATA, BH.HORA_INICIO, BH.HORA_FIM, AGD.STATUS
           FROM PARTICIPA PART
+          JOIN USUARIO USU ON USU.CPF = PART.CPF_ALUNO
           JOIN AGENDAMENTO AGD ON AGD.COD_AGENDAMENTO = PART.COD_AGENDAMENTO
           JOIN ESPACO_ESPORTIVO ESPC ON ESPC.COD_ESPACO = AGD.COD_ESPACO
           JOIN MODALIDADE  MOD ON MOD.COD_MODALIDADE = AGD.COD_MODALIDADE
+          JOIN BLOCO_HORARIO BH ON BH.COD_AGENDAMENTO = AGD.COD_AGENDAMENTO
           WHERE PART.CPF_ALUNO = %s
-          ORDER BY AGD.COD_AGENDAMENTO
-    """, [cpf])  
+          ORDER BY BH.DATA, BH.HORA_INICIO
+    """, [cpf])
 
     linhas = cur.fetchall()
 
     if not linhas:
         print("Esse aluno nao possui agendamentos")
     else:
-        print(f"\nAgendamentos para o CPF {cpf}")
-        for cod_Agendamento, nome_Espaco, nome_Modalidade, status in linhas:
-            print(f" #{cod_Agendamento} - {nome_Espaco} - {nome_Modalidade} - {status}")
+        print(f"\nCPF consultado: {cpf}")
+        for nome, sobrenome, cod_Agendamento, nome_Espaco, nome_Modalidade, data, inicio, fim, status in linhas:
+            # strftime formata a data como 24/11/2026 e a hora como 08:00
+            print(f" {nome} {sobrenome} - #{cod_Agendamento} - {nome_Espaco} - {nome_Modalidade} - "
+                  f"{data.strftime('%d/%m/%Y')} das {inicio.strftime('%H:%M')} as {fim.strftime('%H:%M')} - {status}")
 
     cur.close()
 
