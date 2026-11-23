@@ -33,7 +33,7 @@ def agendamentos_de_um_aluno(conn):
     cur.execute("""
         SELECT AGD.COD_AGENDAMENTO, ESPC.NOME, MOD.NOME, AGD.STATUS
           FROM PARTICIPA PART
-          JOIN AGENDAMENTO AGD ON AGD.COD_AGENDAMENTO = PART.COD_AGEDAMENTO
+          JOIN AGENDAMENTO AGD ON AGD.COD_AGENDAMENTO = PART.COD_AGENDAMENTO
           JOIN ESPACO_ESPORTIVO ESPC ON ESPC.COD_ESPACO = AGD.COD_ESPACO
           JOIN MODALIDADE  MOD ON MOD.COD_MODALIDADE = AGD.COD_MODALIDADE
           WHERE PART.CPF_ALUNO = %s
@@ -44,11 +44,10 @@ def agendamentos_de_um_aluno(conn):
 
     if not linhas:
         print("Esse aluno nao possui agendamentos")
-
-
-    print(f"\nAgendamentos para o CPF {cpf}")
-    for cod_Agendamento, nome_Espaco, nome_Modalidade, status in linhas:
-        print(f" #{cod_Agendamento} - {nome_Espaco} - {nome_Modalidade} - {status}")
+    else:
+        print(f"\nAgendamentos para o CPF {cpf}")
+        for cod_Agendamento, nome_Espaco, nome_Modalidade, status in linhas:
+            print(f" #{cod_Agendamento} - {nome_Espaco} - {nome_Modalidade} - {status}")
 
     cur.close()
 
