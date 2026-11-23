@@ -111,12 +111,18 @@ CREATE TABLE TELEFONE_ORGANIZACAO(
 
 -- 11. CAMPUS: unidade da UFOP onde ficam os espaços esportivos
 CREATE TABLE CAMPUS(
+	COD_CAMPUS			SERIAL 			
+	NOME				VARCHAR(100)	NOT NULL,
+	CIDADE				VARCHAR(100)	NOT NULL,
 
+	PRIMARY KEY (COD_CAMPUS)
 
 );
 
+
 -- 12. ESPACO_ESPORTIVO: local disponível para reserva (superclasse de QUADRA e CAMPO). Fica em um CAMPUS
 CREATE TABLE ESPACO_ESPORTIVO(
+	
 
 
 );
