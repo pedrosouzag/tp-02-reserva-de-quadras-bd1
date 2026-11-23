@@ -1,0 +1,206 @@
+\documentclass[border=5pt]{standalone}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric,positioning,calc,fit}
+\usepackage[normalem]{ulem}
+
+% fontes maiores para o diagrama completo (impressão)
+\newcommand{\erEntFont}{\normalsize}
+\newcommand{\erRelFont}{\footnotesize}
+\newcommand{\erAttFont}{\small}
+\newcommand{\erEntW}{2.9cm}
+\newcommand{\erEntH}{0.95cm}
+\newcommand{\erAttH}{0.6cm}
+\input{estilo_er}
+
+\begin{document}
+\begin{tikzpicture}
+
+  % ======================= USUARIO =======================
+  \node[ent] (U) at (-8.1,19.8) {USUARIO};
+  \node[att] (u1) at (-10.6,21.4) {\pk{CPF}};
+  \node[att] (u2) at (-12.4,20.9) {Nome};
+  \node[att] (u21) at (-14.8,21.7) {Primeiro\_Nome};
+  \node[att] (u22) at (-14.8,20.5) {Sobrenome};
+  \node[att] (u3) at (-9.0,22.3) {Email};
+  \node[mval] (u4) at (-7.0,22.3) {Telefone};
+  \node[att] (u5) at (-5.3,21.4) {Data\_Nasc};
+  \node[der] (u6) at (-10.6,18.7) {Idade};
+  \foreach \a in {u1,u2,u3,u4,u5,u6} \draw (\a)--(U);
+  \draw (u21)--(u2) (u22)--(u2);
+
+  % especialização de USUARIO
+  \node[spec] (du) at (-8.1,17.3) {d};
+  \draw[tot] (U)--(du);
+  \node[ent, minimum width=2.9cm] (UC) at (-16.2,14.4) {USUARIO\_COMUM};
+  \node[ent, minimum width=2.9cm] (AD) at (-8.1,14.4) {ADMINISTRADOR};
+  \node[ent] (F) at (0,14.4) {FUNCIONARIO};
+  \draw (du)--node[sub]{$\supset$}(UC);
+  \draw (du)--node[sub]{$\supset$}(AD);
+  \draw (du)--node[sub]{$\supset$}(F);
+  \node[att] (ad1) at (-6.9,13.2) {Nivel\_Acesso};
+  \draw (ad1)--(AD);
+  \node[att] (f1) at (3.6,13.4) {Cod\_Funcionario};
+  \node[att] (f3) at (1.9,12.0) {Turno};
+  \draw (f1)--(F) (f3)--(F);
+
+  \node[rel] (GE) at (-4.05,14.4) {GERENCIA};
+  \draw (AD)--node[card]{1}(GE);
+  \draw[tot] (GE)--node[card]{N}(F);
+
+  % ======================= ORGANIZACAO / UNIÃO =======================
+  \node[ent] (O) at (-23.4,14.4) {ORGANIZACAO};
+  \node[att] (o1) at (-25.0,15.7) {\pk{Cod\_Org}};
+  \node[att] (o2) at (-23.4,16.1) {Nome};
+  \node[mval] (o4) at (-25.0,13.1) {Telefone};
+  \foreach \a in {o1,o2,o4} \draw (\a)--(O);
+  \node[spec] (un) at (-19.8,11.5) {U};
+  \draw (O)--(un) (UC)--(un);
+  \node[ent] (R) at (-19.8,8.6) {RESPONSAVEL};
+  \draw (un)--node[sub]{$\supset$}(R);
+
+  % ======================= CHAMADO =======================
+  \node[ent, minimum width=3.1cm] (CH) at (2.7,19.8) {CHAMADO\_SUPORTE};
+  \node[att] (ch1) at (0.4,21.3) {\pk{Num\_Chamado}};
+  \node[att] (ch3) at (3.9,22.1) {Descricao};
+  \node[att] (ch4) at (5.6,21.3) {Data\_Abertura};
+  \node[att] (ch5) at (5.6,20.4) {Status};
+  \foreach \a in {ch1,ch3,ch4,ch5} \draw (\a)--(CH);
+  \node[rel] (AB) at (-2.9,19.8) {ABRE};
+  \draw (U)--node[card]{1}(AB);
+  \draw[tot] (AB)--node[card]{N}(CH);
+  \node[rel] (AT) at (1.35,17.1) {ATENDE};
+  \draw (F)--node[card]{1}(AT);
+  \draw (AT)--node[card]{N}(CH);
+
+  % ======================= BLOQUEIO =======================
+  \node[ent] (B) at (10.8,19.8) {BLOQUEIO};
+  \node[att] (b1) at (8.5,21.0) {\pk{Cod\_Bloqueio}};
+  \node[att] (b2) at (10.3,21.7) {Motivo};
+  \node[att] (b3) at (12.4,21.3) {Periodo};
+  \node[att] (b31) at (11.7,22.5) {Inicio};
+  \node[att] (b32) at (13.5,22.5) {Fim};
+  \draw (b1)--(B) (b2)--(B) (b3)--(B) (b31)--(b3) (b32)--(b3);
+  \node[rel] (RG) at (5.4,17.1) {REGISTRA};
+  \draw (F)--node[card]{1}(RG);
+  \draw[tot] (RG)--node[card]{N}(B);
+  \node[rel] (BL) at (14.85,17.1) {BLOQUEIA};
+  \draw[tot] (B)--node[card]{N}(BL);
+
+  % ======================= HORARIO_FUNCIONAMENTO (fraca) =======================
+  % o funcionário abre o espaço em uma data (ex.: dia X, das 7h às 23h)
+  \node[rel] (DF) at (4.3,14.4) {DEFINE};
+  \node[went, minimum width=3.8cm] (H) at (9.4,14.4) {HORARIO\_FUNCIONAMENTO};
+  \draw (F)--node[card]{1}(DF);
+  \draw[tot] (DF)--node[card]{N}(H);
+  \node[att] (h1) at (7.0,15.8) {\ppk{Data}};
+  \node[att] (h2) at (9.4,16.6) {Hora\_Abertura};
+  \node[att] (h3) at (12.0,15.8) {Hora\_Fechamento};
+  \foreach \a in {h1,h2,h3} \draw (\a)--(H);
+
+  % ======================= ESPACO_ESPORTIVO =======================
+  \node[ent, minimum width=3.3cm] (E) at (18.9,14.4) {ESPACO\_ESPORTIVO};
+  \draw (BL)--node[card]{1}(E);
+  \node[irel] (FU) at (14.6,14.4) {FUNCIONA};
+  \draw (E)--node[card,swap]{1}(FU);
+  \draw[tot] (FU)--node[card,swap]{N}(H);
+  \node[att] (e2) at (17.9,16.4) {\pk{Cod\_Espaco}};
+  \node[att] (e3) at (20.1,16.6) {Nome};
+  \node[att] (e4) at (21.7,16.2) {Capacidade};
+  \node[att] (e5) at (22.4,15.3) {Situacao};
+  \foreach \a in {e2,e3,e4,e5} \draw (\a)--(E);
+
+  % especialização de ESPACO
+  \node[spec] (de) at (23.6,14.4) {d};
+  \draw[tot] (E)--(de);
+  \node[ent] (Q) at (27.4,17.3) {QUADRA};
+  \node[ent] (C) at (27.4,14.4) {CAMPO};
+  \draw (de)--node[sub]{$\supset$}(Q);
+  \draw (de)--node[sub]{$\supset$}(C);
+  \node[att] (q1) at (30.0,17.9) {Tipo\_Piso};
+  \node[att] (q2) at (30.0,16.8) {Coberta};
+  \draw (q1)--(Q) (q2)--(Q);
+  \node[att] (k1) at (30.1,15.2) {Tipo\_Gramado};
+  \draw (k1)--(C);
+
+  % ======================= MODALIDADE / AGREGAÇÃO / CAMPUS =======================
+  \node[ent] (M) at (18.9,8.1) {MODALIDADE};
+  \node[att] (m1) at (17.3,6.4) {\pk{Cod\_Modalidade}};
+  \node[att] (m2) at (20.2,6.4) {Nome};
+  \draw (m1)--(M) (m2)--(M);
+  \node[rel] (SU) at (18.9,11.25) {SUPORTA};
+  \draw[tot] (E)--node[card]{N}(SU);
+  \draw (SU)--node[card]{M}(M);
+  % agregação: [ESPACO_ESPORTIVO -- SUPORTA -- MODALIDADE]
+  \node[aggr, fit=(E)(SU)(M)] (AGR) {};
+
+  \node[ent] (CA) at (27,5.4) {CAMPUS};
+  \node[att] (ca1) at (29.2,6.5) {\pk{Cod\_Campus}};
+  \node[att] (ca2) at (29.6,5.4) {Nome};
+  \node[att] (ca3) at (29.2,4.3) {Cidade};
+  \foreach \a in {ca1,ca2,ca3} \draw (\a)--(CA);
+  \node[rel] (LO) at (23.6,9.9) {LOCALIZADO\_EM};
+  \draw[tot] (E)--node[card]{N}(LO);
+  \draw (LO)--node[card]{1}(CA);
+
+  % ======================= CURSO e MATRICULA (relacionamento M:N) =======================
+  % a matrícula é o relacionamento entre aluno e curso; os atributos do par
+  % aluno/curso ficam no relacionamento (ao mudar de curso, surge um novo par)
+  \node[rel] (MR) at (-14.0,11.6) {MATRICULA};
+  \node[ent] (CU) at (-14.0,9.2) {CURSO};
+  \draw[tot] (UC)--node[card,swap]{N}(MR);
+  \draw (MR)--node[card,swap]{M}(CU);
+  \node[att] (mr1) at (-16.9,11.3) {Num\_Matricula};
+  \node[att] (mr2) at (-11.9,10.3) {Data\_Ingresso};
+  \node[att] (mr3) at (-16.7,10.2) {Situacao};
+  \foreach \a in {mr1,mr2,mr3} \draw (\a)--(MR);
+  \node[att] (cu1) at (-11.0,8.7) {\pk{Cod\_Curso}};
+  \node[att] (cu2) at (-16.2,8.7) {Nome};
+  \foreach \a in {cu1,cu2} \draw (\a)--(CU);
+
+  % ======================= AGENDAMENTO =======================
+  \node[ent, minimum width=2.9cm] (AG) at (5.4,3.6) {AGENDAMENTO};
+  \node[att] (g4) at (0.6,2.4) {\pk{Cod\_Agendamento}};
+  \node[att] (g7) at (7.6,2.2) {Status};
+  \node[der] (g9) at (9.6,3.4) {Num\_Participantes};
+  \foreach \a in {g4,g7,g9} \draw (\a)--(AG);
+
+  \node[rel] (RE) at (-7.2,6.1) {REALIZA};
+  \draw (R)--node[card]{1}(RE);
+  \draw[tot] (RE)--node[card]{N}(AG);
+  \node[rel] (PA) at (-9.0,10.8) {PARTICIPA};
+  \draw (UC)--node[card]{N}(PA);
+  \draw (PA)--node[card]{M}(AG);
+  % BLOCO_HORARIO (fraca de HORARIO_FUNCIONAMENTO): o período aberto é
+  % dividido em blocos (ex.: aberto das 7h às 10h -> 7-8, 8-9, 9-10)
+  \node[irel] (CT) at (9.4,12.75) {CONTEM};
+  \node[went, minimum width=3.3cm] (BH) at (9.4,11.0) {BLOCO\_HORARIO};
+  \draw[tot] (H)--node[card]{1}(CT);
+  \draw[tot] (CT)--node[card]{N}(BH);
+  \node[att] (x1) at (6.7,11.5) {\ppk{Hora\_Inicio}};
+  \node[att] (x2) at (12.4,11.5) {Hora\_Fim};
+  \node[der] (x4) at (12.0,10.1) {Duracao};
+  \foreach \a in {x1,x2,x4} \draw (\a)--(BH);
+  % um agendamento ocupa um ou mais blocos; cada bloco é reservado no máximo uma vez
+  \node[rel] (OE) at (7.4,7.3) {OCORRE\_EM};
+  \draw[tot] (AG)--node[card,swap]{1}(OE);
+  \draw (OE)--node[card,swap]{N}(BH);
+  \node[rel] (RS) at (12.4,8.4) {RESERVA};
+  \draw[tot] (AG)--node[card]{N}(RS);
+  \draw (RS)--node[card]{1}(AGR.west);
+
+  % ======================= CANCELAMENTO (subclasse de AGENDAMENTO) =======================
+  \node[ent, minimum width=2.9cm] (CN) at (5.4,-1.6) {CANCELAMENTO};
+  \draw (AG)--node[sub]{$\supset$}(CN);
+  \node[att] (cn1) at (8.4,-2.7) {Data\_Cancelamento};
+  \node[att] (cn2) at (3.0,-2.7) {Motivo};
+  \draw (cn1)--(CN) (cn2)--(CN);
+  \node[rel] (CL) at (-5.4,-1.6) {CANCELA};
+  \draw[rounded corners] (U.west) -- (-27,19.8) -- node[pos=0.5, left, font=\footnotesize]{1} (-27,-1.6) -- (CL);
+  \draw[tot] (CL)--node[card]{N}(CN);
+
+\end{tikzpicture}
+\end{document}

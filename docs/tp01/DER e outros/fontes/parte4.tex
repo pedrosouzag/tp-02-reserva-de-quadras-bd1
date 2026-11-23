@@ -1,0 +1,40 @@
+\begin{tikzpicture}
+  \node[ent] (F) at (0,0) {FUNCIONARIO};
+  % BLOQUEIO
+  \node[rel] (RG) at (0,1.9) {REGISTRA};
+  \node[ent] (B) at (0,3.8) {BLOQUEIO};
+  \draw (F)--node[card]{1}(RG);
+  \draw[tot] (RG)--node[card]{N}(B);
+  \node[att] (b1) at (-2.4,4.4) {\pk{Cod\_Bloqueio}};
+  \node[att] (b2) at (-1.0,5.1) {Motivo};
+  \node[att] (b3) at (1.0,5.1) {Periodo};
+  \node[att] (b31) at (0.3,6.1) {Inicio};
+  \node[att] (b32) at (1.8,6.1) {Fim};
+  \draw (b1)--(B) (b2)--(B) (b3)--(B) (b31)--(b3) (b32)--(b3);
+  \node[rel] (BL) at (3.8,3.8) {BLOQUEIA};
+  \node[ent, minimum width=2.9cm] (E) at (7.8,3.8) {ESPACO\_ESPORTIVO};
+  \draw[tot] (B)--node[card]{N}(BL);
+  \draw (BL)--node[card]{1}(E);
+  % HORARIO_FUNCIONAMENTO (o funcionário abre o espaço em uma data)
+  \node[rel] (DF) at (3.6,0) {DEFINE};
+  \node[went, minimum width=3.4cm] (H) at (7.8,0) {HORARIO\_FUNCIONAMENTO};
+  \draw (F)--node[card]{1}(DF);
+  \draw[tot] (DF)--node[card]{N}(H);
+  \node[irel] (FU) at (7.8,1.9) {FUNCIONA};
+  \draw (E)--node[card]{1}(FU);
+  \draw[tot] (FU)--node[card]{N}(H);
+  % CHAMADO
+  \node[rel] (AT) at (-3.8,0) {ATENDE};
+  \node[ent] (CH) at (-7.6,0) {CHAMADO\_SUPORTE};
+  \draw (F)--node[card]{1}(AT);
+  \draw (AT)--node[card]{N}(CH);
+  \node[att] (ch1) at (-10.1,0.9) {\pk{Num\_Chamado}};
+  \node[att] (ch3) at (-7.8,1.6) {Descricao};
+  \node[att] (ch4) at (-6.2,1.4) {Data\_Abertura};
+  \node[att] (ch5) at (-5.5,0.8) {Status};
+  \foreach \a in {ch1,ch3,ch4,ch5} \draw (\a)--(CH);
+  \node[rel] (AB) at (-7.6,-1.6) {ABRE};
+  \node[ent] (U) at (-7.6,-3.0) {USUARIO};
+  \draw (U)--node[card]{1}(AB);
+  \draw[tot] (AB)--node[card]{N}(CH);
+\end{tikzpicture}

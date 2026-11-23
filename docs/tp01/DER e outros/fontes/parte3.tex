@@ -1,0 +1,51 @@
+\begin{tikzpicture}
+  \node[ent, minimum width=2.6cm] (AG) at (0,0) {AGENDAMENTO};
+  \node[att] (g1) at (-1.6,1.5) {\pk{Cod\_Agendamento}};
+  \node[att] (g3) at (1.9,1.5) {Status};
+  \node[der] (g4) at (2.9,0.8) {Num\_Participantes};
+  \foreach \a in {g1,g3,g4} \draw (\a)--(AG);
+  % REALIZA
+  \node[rel] (RE) at (-4.6,0) {REALIZA};
+  \node[ent] (R) at (-8.4,0) {RESPONSAVEL};
+  \draw (R)--node[card]{1}(RE);
+  \draw[tot] (RE)--node[card]{N}(AG);
+  % PARTICIPA
+  \node[rel] (PA) at (-4.6,-1.9) {PARTICIPA};
+  \node[ent, minimum width=2.7cm] (UC) at (-8.4,-1.9) {USUARIO\_COMUM};
+  \draw (UC)--node[card]{N}(PA);
+  \draw (PA)--node[card]{M}(AG);
+  % RESERVA -> agregação [ESPACO -- SUPORTA -- MODALIDADE]
+  \node[ent, minimum width=2.9cm] (E) at (9.4,1.6) {ESPACO\_ESPORTIVO};
+  \node[rel] (SU) at (9.4,0) {SUPORTA};
+  \node[ent] (M) at (9.4,-1.6) {MODALIDADE};
+  \draw[tot] (E)--node[card]{N}(SU);
+  \draw (SU)--node[card]{M}(M);
+  \node[aggr, fit=(E)(SU)(M)] (AGR) {};
+  \node[rel] (RS) at (4.9,0) {RESERVA};
+  \draw[tot] (AG)--node[card]{N}(RS);
+  \draw (RS)--node[card]{1}(AGR.west);
+  % OCORRE_EM -> BLOCO_HORARIO (um agendamento ocupa um ou mais blocos)
+  \node[rel] (OE) at (4.0,-2.6) {OCORRE\_EM};
+  \node[went, minimum width=2.9cm] (H) at (8.0,-3.9) {BLOCO\_HORARIO};
+  \draw[tot] (AG)--node[card,swap]{1}(OE);
+  \draw (OE)--node[card,swap]{N}(H);
+  \node[att] (h2) at (6.9,-5.2) {\ppk{Hora\_Inicio}};
+  \node[att] (h3) at (8.9,-5.4) {Hora\_Fim};
+  \node[der] (h4) at (10.4,-4.9) {Duracao};
+  \foreach \a in {h2,h3,h4} \draw (\a)--(H);
+  % CANCELAMENTO: subclasse de AGENDAMENTO (especialização parcial)
+  \node[ent, minimum width=2.6cm] (CN) at (0,-3.9) {CANCELAMENTO};
+  \draw (AG)--node[sub]{$\supset$}(CN);
+  \node[att] (cn1) at (1.9,-5.1) {Data\_Cancelamento};
+  \node[att] (cn2) at (-1.6,-5.1) {Motivo};
+  \draw (cn1)--(CN) (cn2)--(CN);
+  \node[rel] (CL) at (-4.6,-3.9) {CANCELA};
+  \node[ent] (U) at (-8.4,-3.9) {USUARIO};
+  \draw (U)--node[card]{1}(CL);
+  \draw[tot] (CL)--node[card]{N}(CN);
+  % blocos pertencem ao horário de funcionamento (entidade fraca)
+  \node[irel] (CT) at (12.2,-3.9) {CONTEM};
+  \node[went, minimum width=3.4cm] (HF) at (16.2,-3.9) {HORARIO\_FUNCIONAMENTO};
+  \draw[tot] (HF)--node[card,swap]{1}(CT);
+  \draw[tot] (CT)--node[card,swap]{N}(H);
+\end{tikzpicture}

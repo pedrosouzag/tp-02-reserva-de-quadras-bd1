@@ -1,0 +1,108 @@
+\documentclass[aspectratio=169,10pt]{beamer}
+\usetheme{Madrid}
+\usecolortheme{default}
+\setbeamertemplate{navigation symbols}{}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric,positioning,calc,fit}
+\usepackage{adjustbox}
+\usepackage[normalem]{ulem}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+
+\input{estilo_er}
+\newcommand{\diag}[1]{\begin{adjustbox}{max width=\linewidth, max totalheight=0.80\textheight, center}#1\end{adjustbox}}
+
+% rodapé: só "TP1"
+\setbeamertemplate{footline}{%
+  \begin{beamercolorbox}[wd=\paperwidth,ht=2.5ex,dp=1ex,center]{title in head/foot}%
+    \usebeamerfont{title in head/foot}TP1%
+  \end{beamercolorbox}}
+
+\usepackage{graphicx}
+
+\title[TP I -- Modelagem Conceitual]{Sistema de Alocação de Quadras da UFOP}
+\subtitle{Trabalho Prático I -- Modelagem Conceitual de Dados (ERE)}
+\author[Pedro Souza et al.]{Pedro Souza \and Luiz Felipe Bento \and Gabriel Canuto \\ David Cristian \and Marcus Leandro \and Pedro Henrique Boseja}
+\institute[UFOP]{BCC321 -- Banco de Dados I \\ Prof. Guilherme Tavares de Assis \\ DECOM / ICEB / UFOP}
+\date{2026/2}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% =====================================================================
+\section{Minimundo}
+% =====================================================================
+
+\begin{frame}{Minimundo -- O sistema}
+  \large
+  \begin{itemize}
+    \item Agendamento das quadras e campos da UFOP
+    \item Evita conflitos de horário e reservas sem controle
+    \item Alunos e organizações reservam; funcionários administram
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Minimundo -- Quem usa}
+  \large
+  \begin{itemize}
+    \item Usuário comum (aluno): reserva e participa
+    \item Funcionário: abre os horários dos espaços, bloqueia, cancela e dá suporte
+    \item Administrador: gerencia os funcionários
+    \item Organização (atlética, DCE...): também pode reservar
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Minimundo -- Como funciona}
+  \large
+  \begin{itemize}
+    \item Cada espaço (quadra ou campo) fica em um campus
+    \item O agendamento reserva um espaço + modalidade, em uma data,
+          ocupando um ou mais blocos de 1 hora do horário aberto
+    \item Pode ser cancelado, e o espaço pode ser bloqueado
+    \item Usuários podem abrir chamados de suporte
+  \end{itemize}
+\end{frame}
+
+% =====================================================================
+\section{ERE}
+% =====================================================================
+
+\begin{frame}{ERE completo}
+  \centering
+  \includegraphics[width=\linewidth,height=0.86\textheight,keepaspectratio]{der.pdf}
+\end{frame}
+
+\begin{frame}{ERE -- detalhe (1/4): Usuários, curso, especialização e união}
+\diag{\input{parte1}}
+\end{frame}
+
+\begin{frame}{ERE -- detalhe (2/4): Espaços, horário de funcionamento e agregação}
+\diag{\input{parte2}}
+\end{frame}
+
+\begin{frame}{ERE -- detalhe (3/4): Agendamento, blocos de horário e cancelamento}
+\diag{\input{parte3}}
+\end{frame}
+
+\begin{frame}{ERE -- detalhe (4/4): Gestão: bloqueios, horários e suporte}
+\diag{\input{parte4}}
+\end{frame}
+
+\begin{frame}
+  \centering\Huge Obrigado!\par\vspace{0.5em}
+  \large Dúvidas?
+\end{frame}
+
+\end{document}

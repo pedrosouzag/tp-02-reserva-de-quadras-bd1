@@ -1,0 +1,54 @@
+\begin{tikzpicture}
+  % USUARIO
+  \node[ent] (U) at (0,3) {USUARIO};
+  \node[att] (u1) at (-2.9,4.2) {\pk{CPF}};
+  \node[att] (u2) at (-3.5,3) {Nome};
+  \node[att] (u21) at (-5.7,3.6) {Primeiro\_Nome};
+  \node[att] (u22) at (-5.7,2.4) {Sobrenome};
+  \node[att] (u3) at (-1.0,4.7) {Email};
+  \node[mval] (u4) at (1.0,4.7) {Telefone};
+  \node[att] (u5) at (2.9,4.2) {Data\_Nasc};
+  \node[der] (u6) at (3.5,3) {Idade};
+  \foreach \a in {u1,u2,u3,u4,u5,u6} \draw (\a)--(U);
+  \draw (u21)--(u2) (u22)--(u2);
+  % especialização
+  \node[spec] (d1) at (0,1.6) {d};
+  \draw[tot] (U)--(d1);
+  \node[ent] (UC) at (-5,0) {USUARIO\_COMUM};
+  \node[ent] (F) at (0,0) {FUNCIONARIO};
+  \node[ent] (A) at (5.5,0) {ADMINISTRADOR};
+  \draw (d1)--node[sub]{$\supset$}(UC);
+  \draw (d1)--node[sub]{$\supset$}(F);
+  \draw (d1)--node[sub]{$\supset$}(A);
+  % CURSO e MATRICULA (relacionamento M:N com atributos do par aluno/curso)
+  \node[rel] (MR) at (-3.7,-1.6) {MATRICULA};
+  \node[ent] (CU) at (-2.6,-3.3) {CURSO};
+  \draw[tot] (UC)--node[card,swap]{N}(MR);
+  \draw (MR)--node[card,swap]{M}(CU);
+  \node[att] (mr1) at (-5.6,-2.6) {Num\_Matricula};
+  \node[att] (mr2) at (-5.0,-3.5) {Data\_Ingresso};
+  \node[att] (mr3) at (-1.0,-2.4) {Situacao};
+  \foreach \a in {mr1,mr2,mr3} \draw (\a)--(MR);
+  \node[att] (cu1) at (-3.6,-4.5) {\pk{Cod\_Curso}};
+  \node[att] (cu2) at (-1.4,-4.4) {Nome};
+  \foreach \a in {cu1,cu2} \draw (\a)--(CU);
+  \node[att] (f1) at (-1.2,-1.3) {Cod\_Funcionario};
+  \node[att] (f3) at (1.2,-1.3) {Turno};
+  \draw (f1)--(F) (f3)--(F);
+  \node[att] (a1) at (5.5,-1.3) {Nivel\_Acesso};
+  \draw (a1)--(A);
+  % GERENCIA
+  \node[rel] (G) at (2.75,0) {GERENCIA};
+  \draw (A)--node[card]{1}(G);
+  \draw[tot] (G)--node[card]{N}(F);
+  % ORGANIZACAO e união
+  \node[ent] (O) at (-10,0) {ORGANIZACAO};
+  \node[att] (o1) at (-11.6,1.2) {\pk{Cod\_Org}};
+  \node[att] (o2) at (-10,1.5) {Nome};
+  \node[mval] (o4) at (-11.9,-1.0) {Telefone};
+  \foreach \a in {o1,o2,o4} \draw (\a)--(O);
+  \node[spec] (un) at (-7.5,-2.4) {U};
+  \draw (O)--(un) (UC)--(un);
+  \node[ent] (R) at (-7.5,-3.9) {RESPONSAVEL};
+  \draw (un)--node[sub]{$\supset$}(R);
+\end{tikzpicture}

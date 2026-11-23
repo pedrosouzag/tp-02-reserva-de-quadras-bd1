@@ -1,0 +1,40 @@
+% =====================================================================
+% Estilo dos diagramas ER/ERE -- notação Elmasri & Navathe,
+% cores inspiradas na ferramenta TerraER
+% (entidade verde, relacionamento amarelo, atributo lilás).
+% Tamanhos de fonte podem ser redefinidos antes do \input.
+% =====================================================================
+\definecolor{terraEnt}{RGB}{186,242,186}
+\definecolor{terraEntB}{RGB}{40,110,40}
+\definecolor{terraRel}{RGB}{255,240,90}
+\definecolor{terraRelB}{RGB}{120,100,0}
+\definecolor{terraAtt}{RGB}{170,170,238}
+\definecolor{terraAttB}{RGB}{40,40,120}
+
+\providecommand{\erEntFont}{\scriptsize}
+\providecommand{\erRelFont}{\tiny}
+\providecommand{\erAttFont}{\tiny}
+\providecommand{\erEntW}{2.3cm}
+\providecommand{\erEntH}{0.7cm}
+\providecommand{\erAttH}{0.42cm}
+
+\tikzset{
+  ent/.style={draw=terraEntB, semithick, rectangle, minimum width=\erEntW,
+              minimum height=\erEntH, font=\sffamily\erEntFont, fill=terraEnt},
+  went/.style={ent, double, double distance=1.5pt},
+  rel/.style={draw=terraRelB, semithick, diamond, aspect=2.4, inner sep=1pt,
+              font=\sffamily\erRelFont, fill=terraRel},
+  irel/.style={rel, double, double distance=1.5pt},
+  att/.style={draw=terraAttB, ellipse, inner sep=0.6pt, minimum height=\erAttH,
+              font=\sffamily\erAttFont, fill=terraAtt},
+  mval/.style={att, double, double distance=1pt},
+  der/.style={att, dashed},
+  spec/.style={draw, thick, circle, inner sep=0pt, minimum size=0.5cm,
+               font=\sffamily\erEntFont, fill=white},
+  tot/.style={double, double distance=1.6pt, line width=0.6pt},
+  card/.style={midway, auto, inner sep=1.5pt, font=\sffamily\erEntFont},
+  aggr/.style={draw=terraEntB, thick, rectangle, inner sep=0.35cm},
+  sub/.style={midway, sloped, allow upside down, font=\small, inner sep=0pt},
+}
+\newcommand{\pk}[1]{\underline{#1}}
+\newcommand{\ppk}[1]{\dashuline{#1}}

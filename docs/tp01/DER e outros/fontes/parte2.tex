@@ -1,0 +1,47 @@
+\begin{tikzpicture}
+  \node[ent, minimum width=2.9cm] (E) at (0,3) {ESPACO\_ESPORTIVO};
+  \node[att] (e2) at (-0.9,4.8) {\pk{Cod\_Espaco}};
+  \node[att] (e3) at (0.8,4.9) {Nome};
+  \node[att] (e4) at (2.4,4.5) {Capacidade};
+  \node[att] (e5) at (3.3,3.8) {Situacao};
+  \foreach \a in {e2,e3,e4,e5} \draw (\a)--(E);
+  % especialização
+  \node[spec] (d2) at (0,1.2) {d};
+  \draw[tot] (E)--(d2);
+  \node[ent] (Q) at (-2.6,-0.6) {QUADRA};
+  \node[ent] (C) at (2.6,-0.6) {CAMPO};
+  \draw (d2)--node[sub]{$\supset$}(Q);
+  \draw (d2)--node[sub]{$\supset$}(C);
+  \node[att] (q1) at (-3.5,-1.9) {Tipo\_Piso};
+  \node[att] (q2) at (-1.8,-2.0) {Coberta};
+  \draw (q1)--(Q) (q2)--(Q);
+  \node[att] (k1) at (2.6,-1.9) {Tipo\_Gramado};
+  \draw (k1)--(C);
+  % MODALIDADE e agregação [ESPACO -- SUPORTA -- MODALIDADE]
+  \node[rel] (S) at (-4.4,3) {SUPORTA};
+  \node[ent] (M) at (-8.4,3) {MODALIDADE};
+  \draw[tot] (E)--node[card,swap]{N}(S);
+  \draw (S)--node[card,swap]{M}(M);
+  \node[att] (m1) at (-9.4,1.6) {\pk{Cod\_Modalidade}};
+  \node[att] (m2) at (-7.2,1.6) {Nome};
+  \draw (m1)--(M) (m2)--(M);
+  \node[aggr, fit=(M)(S)(E)] (AGR) {};
+  % HORARIO_FUNCIONAMENTO (entidade fraca): espaço aberto em uma data
+  \node[irel] (FU) at (4.6,1.4) {FUNCIONA};
+  \node[went, minimum width=3.4cm] (HF) at (8.4,0.2) {HORARIO\_FUNCIONAMENTO};
+  \draw (E)--node[card]{1}(FU);
+  \draw[tot] (FU)--node[card]{N}(HF);
+  \node[att] (hf1) at (6.9,-1.1) {\ppk{Data}};
+  \node[att] (hf2) at (8.5,-1.4) {Hora\_Abertura};
+  \node[att] (hf3) at (10.3,-1.0) {Hora\_Fechamento};
+  \foreach \a in {hf1,hf2,hf3} \draw (\a)--(HF);
+  % CAMPUS
+  \node[rel] (L) at (5.4,3) {LOCALIZADO\_EM};
+  \node[ent] (CA) at (9.2,3) {CAMPUS};
+  \draw[tot] (E)--node[card]{N}(L);
+  \draw (L)--node[card]{1}(CA);
+  \node[att] (ca1) at (7.9,4.2) {\pk{Cod\_Campus}};
+  \node[att] (ca2) at (9.5,4.5) {Nome};
+  \node[att] (ca3) at (10.8,4.0) {Cidade};
+  \foreach \a in {ca1,ca2,ca3} \draw (\a)--(CA);
+\end{tikzpicture}
