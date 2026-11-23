@@ -1,0 +1,32 @@
+# ===== Senhas e configurações locais (NUNCA subir) =====
+.env
+config.ini
+src/config.py
+
+# ===== Python =====
+__pycache__/
+*.pyc
+venv/
+.venv/
+env/
+
+# ===== C++ (caso usem) =====
+*.exe
+*.o
+build/
+
+# ===== LaTeX (arquivos temporários de compilação) =====
+*.aux
+*.log
+*.out
+*.toc
+*.nav
+*.snm
+*.synctex.gz
+
+# ===== Editores e sistema =====
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+.DS_Store
