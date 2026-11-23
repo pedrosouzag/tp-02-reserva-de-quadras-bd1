@@ -1,10 +1,15 @@
 """OPERACOES DE CONSULTAS"""
 
+"""consulta 1: mostra os blocos de horario livres de um espaco em uma data"""
 def horarios_livres_data(conn):
+    # pede o codigo do espaco e a data para o usuario
     espaco = input("Codigo do espaco: ")
     data = input("Data (AAAA-MM-DD): ")
 
+    # o cursor e quem executa o sql no banco
     cur = conn.cursor()
+
+    # bloco sem agendamento (COD_AGENDAMENTO IS NULL) = horario livre
     cur.execute("""
         SELECT HORA_INICIO, HORA_FIM
           FROM BLOCO_HORARIO
@@ -15,21 +20,28 @@ def horarios_livres_data(conn):
 
     linhas = cur.fetchall()
 
+    # se a lista vier vazia, nao tem horario livre
     if not linhas:
         print("Nenhum horario livre para esse espaco nessa data.")
     else:
         print("\nHorarios livres:")
         for inicio, fim in linhas:
+            # strftime formata a hora como 08:00
             print(f"  {inicio.strftime('%H:%M')} - {fim.strftime('%H:%M')}")
 
     cur.close()
 
 
 
+"""consulta 2: mostra os agendamentos de que um aluno participa"""
 def agendamentos_de_um_aluno(conn):
+    # o cpf eh digitado so com numeros
     cpf = input("Digite o CPF do aluno(apenas numeros) para consultar os agendamentos:")
     cur = conn.cursor()
 
+    # parte da participa (onde esta o cpf) e junta o agendamento, o espaco e a modalidade
+    # cada join cola as linhas de outra tabela usando a chave estrangeira
+    # o where deixa so as linhas do aluno digitado
     cur.execute("""
         SELECT AGD.COD_AGENDAMENTO, ESPC.NOME, MOD.NOME, AGD.STATUS
           FROM PARTICIPA PART
@@ -38,7 +50,7 @@ def agendamentos_de_um_aluno(conn):
           JOIN MODALIDADE  MOD ON MOD.COD_MODALIDADE = AGD.COD_MODALIDADE
           WHERE PART.CPF_ALUNO = %s
           ORDER BY AGD.COD_AGENDAMENTO
-    """, [cpf])
+    """, [cpf])  
 
     linhas = cur.fetchall()
 
@@ -52,8 +64,34 @@ def agendamentos_de_um_aluno(conn):
     cur.close()
 
 
+"""consulta 3: mostra os espacos que oferecem uma modalidade"""
 def espacos_por_modalidades(conn):
-    pass
+    modalidade = input("Digite o nome da modalidade (ex: futsal, volei): ")
+    cur = conn.cursor()
+
+    # parte da espaco_modalidade (ponte entre espaco e modalidade)
+    # junta a modalidade para filtrar pelo nome, o espaco para os dados e o campus para o nome dele
+    # ilike compara o texto sem ligar para maiuscula e minuscula
+    cur.execute("""
+        SELECT ESPC.NOME, CAMP.NOME, ESPC.CAPACIDADE, ESPC.SITUACAO
+          FROM ESPACO_MODALIDADE EM
+          JOIN MODALIDADE MDL ON MDL.COD_MODALIDADE = EM.COD_MODALIDADE
+          JOIN ESPACO_ESPORTIVO ESPC ON ESPC.COD_ESPACO = EM.COD_ESPACO
+          JOIN CAMPUS CAMP ON CAMP.COD_CAMPUS = ESPC.COD_CAMPUS
+          WHERE MDL.NOME ILIKE %s
+          ORDER BY ESPC.NOME
+    """, [modalidade])
+
+    linhas = cur.fetchall()
+
+    if not linhas:
+        print("Nenhum espaco oferece essa modalidade.")
+    else:
+        print(f"\nEspacos que oferecem {modalidade}:")
+        for nome_Espaco, nome_Campus, capacidade, situacao in linhas:
+            print(f" {nome_Espaco} ({nome_Campus}) - capacidade {capacidade} - {situacao}")
+
+    cur.close()
 
 def historico_matriculas(conn):
     pass
