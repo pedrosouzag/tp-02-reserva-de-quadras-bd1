@@ -41,7 +41,11 @@ TP02/
 
 ## 4. Tecnologias utilizadas
 
-As tecnologias e ferramentas utilizadas serão documentadas conforme o desenvolvimento do projeto.
+- PostgreSQL 19 – sistema gerenciador de banco de dados utilizado para a implantação do banco.
+- pgAdmin 4 – interface gráfica para administração do banco e execução dos scripts SQL.
+- SQL – criação das tabelas, restrições de integridade e inserção dos dados (pasta `database/`).
+
+As demais tecnologias (linguagem do sistema) serão documentadas conforme o desenvolvimento do projeto.
 
 ## 5. Execução
 
