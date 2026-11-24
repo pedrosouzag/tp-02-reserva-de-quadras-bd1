@@ -10,11 +10,13 @@ def horarios_livres_data(conn):
     cur = conn.cursor()
 
     # bloco sem agendamento (COD_AGENDAMENTO IS NULL) = horario livre
+    # o join com o espaco_esportivo e so para pegar o nome do espaco
     cur.execute("""
-        SELECT HORA_INICIO, HORA_FIM
-          FROM BLOCO_HORARIO
-          WHERE COD_ESPACO = %s AND DATA = %s AND COD_AGENDAMENTO IS NULL
-          ORDER BY HORA_INICIO
+        SELECT ESPC.NOME, BH.DATA, BH.HORA_INICIO, BH.HORA_FIM
+          FROM BLOCO_HORARIO BH
+          JOIN ESPACO_ESPORTIVO ESPC ON ESPC.COD_ESPACO = BH.COD_ESPACO
+          WHERE BH.COD_ESPACO = %s AND BH.DATA = %s AND BH.COD_AGENDAMENTO IS NULL
+          ORDER BY BH.HORA_INICIO
 
     """, (espaco, data))
 
@@ -25,9 +27,10 @@ def horarios_livres_data(conn):
         print("Nenhum horario livre para esse espaco nessa data.")
     else:
         print("\nHorarios livres:")
-        for inicio, fim in linhas:
-            # strftime formata a hora como 08:00
-            print(f"  {inicio.strftime('%H:%M')} - {fim.strftime('%H:%M')}")
+        for nome_Espaco, data_Bloco, inicio, fim in linhas:
+            # strftime formata a data como 24/11/2026 e a hora como 08:00
+            print(f"  {nome_Espaco} - {data_Bloco.strftime('%d/%m/%Y')} - "
+                  f"{inicio.strftime('%H:%M')} as {fim.strftime('%H:%M')}")
 
     cur.close()
 
