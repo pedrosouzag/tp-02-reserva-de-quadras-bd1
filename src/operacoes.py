@@ -1,10 +1,24 @@
+"""FUNCOES AUXILIARES"""
+
+class Voltar(Exception):
+    """lancada quando o usuario digita 0 para voltar ao menu"""
+
+
+def ler(texto):
+    # le uma entrada do usuario; se digitar 0, volta para o menu
+    valor = input(f"{texto} (0 = voltar): ").strip()
+    if valor == "0":
+        raise Voltar
+    return valor
+
+
 """OPERACOES DE CONSULTAS"""
 
 """consulta 1: mostra os blocos de horario livres de um espaco em uma data"""
 def horarios_livres_data(conn):
     # pede o codigo do espaco e a data para o usuario
-    espaco = input("Codigo do espaco: ")
-    data = input("Data (AAAA-MM-DD): ")
+    espaco = ler("Codigo do espaco")
+    data = ler("Data (AAAA-MM-DD)")
 
     # o cursor e quem executa o sql no banco
     cur = conn.cursor()
@@ -39,7 +53,7 @@ def horarios_livres_data(conn):
 """consulta 2: mostra os agendamentos de que um aluno participa"""
 def agendamentos_de_um_aluno(conn):
     # o cpf eh digitado so com numeros
-    cpf = input("Digite o CPF do aluno(apenas numeros) para consultar os agendamentos:")
+    cpf = ler("Digite o CPF do aluno (apenas numeros)")
     cur = conn.cursor()
 
     # parte da participa (onde esta o cpf) e junta o usuario (nome), o agendamento,
@@ -74,7 +88,7 @@ def agendamentos_de_um_aluno(conn):
 
 """consulta 3: mostra os espacos que oferecem uma modalidade"""
 def espacos_por_modalidades(conn):
-    modalidade = input("Digite o nome da modalidade (ex: futsal, volei): ")
+    modalidade = ler("Digite o nome da modalidade (ex: futsal, volei)")
     cur = conn.cursor()
 
     # parte da espaco_modalidade (ponte entre espaco e modalidade)
@@ -101,17 +115,106 @@ def espacos_por_modalidades(conn):
 
     cur.close()
 
+"""consulta 4: mostra o historico de matriculas (cursos) de um aluno"""
 def historico_matriculas(conn):
-    pass
+    cpf = ler("Digite o CPF do aluno (apenas numeros)")
+    cur = conn.cursor()
+
+    # parte da matricula (relacionamento aluno-curso) e junta o curso (nome)
+    # e o usuario (nome do aluno); ordena pela data de ingresso
+    cur.execute("""
+        SELECT USU.PRIMEIRO_NOME, USU.SOBRENOME, CUR.NOME, MAT.NUM_MATRICULA, MAT.DATA_INGRESSO, MAT.SITUACAO
+          FROM MATRICULA MAT
+          JOIN CURSO CUR ON CUR.COD_CURSO = MAT.COD_CURSO
+          JOIN USUARIO USU ON USU.CPF = MAT.CPF_ALUNO
+          WHERE MAT.CPF_ALUNO = %s
+          ORDER BY MAT.DATA_INGRESSO
+    """, [cpf])
+
+    linhas = cur.fetchall()
+
+    if not linhas:
+        print("Nenhuma matricula encontrada para esse CPF.")
+    else:
+        nome, sobrenome = linhas[0][0], linhas[0][1]
+        print(f"\nHistorico de matriculas de {nome} {sobrenome}:")
+        for _, _, curso, num_Matricula, data_Ingresso, situacao in linhas:
+            print(f"  {curso} - matricula {num_Matricula} - "
+                  f"ingresso em {data_Ingresso.strftime('%d/%m/%Y')} - {situacao}")
+
+    cur.close()
 
 
 """OPERACAO DE UPDATE"""
 
+"""update: muda a situacao de um espaco (ex: disponivel -> manutencao)"""
 def mudar_situacao_espaco(conn):
-    pass
+    cur = conn.cursor()
+
+    # mostra os espacos para o usuario escolher
+    cur.execute("SELECT COD_ESPACO, NOME, SITUACAO FROM ESPACO_ESPORTIVO ORDER BY COD_ESPACO")
+    print("\nEspacos cadastrados:")
+    for cod, nome, situacao in cur.fetchall():
+        print(f"  {cod} - {nome} - {situacao}")
+
+    espaco = ler("Codigo do espaco")
+    nova = ler("Nova situacao (disponivel / manutencao / interditado)")
+
+    cur.execute("""
+        UPDATE ESPACO_ESPORTIVO
+           SET SITUACAO = %s
+         WHERE COD_ESPACO = %s
+    """, (nova, espaco))
+
+    # rowcount = quantas linhas o update alterou (0 = codigo nao existe)
+    if cur.rowcount == 0:
+        print("Nenhum espaco com esse codigo.")
+        conn.rollback()
+    else:
+        conn.commit()
+        print(f"Situacao do espaco {espaco} alterada para '{nova}'.")
+
+    cur.close()
 
 
 """OPERACAO DELETE"""
 
+"""delete: remove um agendamento
+   PARTICIPA e CANCELAMENTO dele sao apagados em cascata (ON DELETE CASCADE)
+   e os blocos de horario voltam a ficar livres (ON DELETE SET NULL)"""
 def remover_agendamento (conn):
-    pass
+    cur = conn.cursor()
+
+    # mostra os agendamentos para o usuario escolher
+    cur.execute("""
+        SELECT AGD.COD_AGENDAMENTO, ESPC.NOME, MDL.NOME, AGD.STATUS
+          FROM AGENDAMENTO AGD
+          JOIN ESPACO_ESPORTIVO ESPC ON ESPC.COD_ESPACO = AGD.COD_ESPACO
+          JOIN MODALIDADE MDL ON MDL.COD_MODALIDADE = AGD.COD_MODALIDADE
+          ORDER BY AGD.COD_AGENDAMENTO
+    """)
+    print("\nAgendamentos cadastrados:")
+    for cod, espaco, modalidade, status in cur.fetchall():
+        print(f"  #{cod} - {espaco} - {modalidade} - {status}")
+
+    cod = ler("Codigo do agendamento a remover")
+    confirma = ler(f"Confirma a remocao do agendamento #{cod}? (s/n)")
+    if confirma.lower() != "s":
+        print("Remocao cancelada.")
+        cur.close()
+        return
+
+    # conta os blocos ocupados antes, para mostrar quantos foram liberados
+    cur.execute("SELECT COUNT(*) FROM BLOCO_HORARIO WHERE COD_AGENDAMENTO = %s", [cod])
+    blocos = cur.fetchone()[0]
+
+    cur.execute("DELETE FROM AGENDAMENTO WHERE COD_AGENDAMENTO = %s", [cod])
+
+    if cur.rowcount == 0:
+        print("Nenhum agendamento com esse codigo.")
+        conn.rollback()
+    else:
+        conn.commit()
+        print(f"Agendamento #{cod} removido. {blocos} bloco(s) de horario liberado(s).")
+
+    cur.close()
